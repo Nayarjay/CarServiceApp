@@ -1,5 +1,4 @@
 package org.example.model;
-package com.example.model.carservice.entity;
 
 import jakarta.persistence.*;
 
