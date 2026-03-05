@@ -1,13 +1,17 @@
 package org.example.Controller;
 
-
 import org.example.model.CarService;
+import org.example.model.CarType;
 import org.example.repository.CarServiceRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 @Controller
+@RequestMapping("/")
 public class CarServiceController {
 
     private final CarServiceRepository repository;
@@ -16,45 +20,37 @@ public class CarServiceController {
         this.repository = repository;
     }
 
-    // Home page
-    @GetMapping("/")
+    @GetMapping
     public String home() {
-        return "home";
+        return "index";
     }
 
-    // Show all services
-    @GetMapping("/services")
-    public String listServices(Model model) {
-        model.addAttribute("services", repository.findAll());
-        return "list-services";
+    @GetMapping("/cars")
+    public String listCars(Model model) {
+        model.addAttribute("cars", repository.findAll());
+        return "list-cars";
     }
 
-    // Show form
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("carService", new CarService());
-        return "add-service";
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("car", new CarService());
+        model.addAttribute("carTypes", CarType.values());
+        return "create-car";
     }
 
-    // Save service
     @PostMapping("/save")
-    public String saveService(@ModelAttribute CarService carService) {
-        repository.save(carService);
-        return "redirect:/services";
+    public String saveCar(@Valid @ModelAttribute("car") CarService car, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("carTypes", CarType.values());
+            return "create-car";
+        }
+        repository.save(car);
+        return "redirect:/cars";
     }
 
-    // Edit form
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        CarService service = repository.findById(id).orElseThrow();
-        model.addAttribute("carService", service);
-        return "edit-service";
-    }
-
-    // Delete
     @GetMapping("/delete/{id}")
-    public String deleteService(@PathVariable Long id) {
+    public String deleteCar(@PathVariable Long id) {
         repository.deleteById(id);
-        return "redirect:/services";
+        return "redirect:/cars";
     }
 }

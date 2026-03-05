@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>My Car Items</h2>
+                <a th:href="@{/create}" class="btn btn-primary">+ Create New Car</a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(cars)}" style="padding: 40px; text-align: center; color: #7f8c8d;">
+                <h3>No Car Items Found</h3>
+                <p>Register your first car to see it here.</p>
+            </div>
+
+            <table th:if="${not #lists.isEmpty(cars)}">
+                <thead>
+                    <tr>
+                        <th>Brand & Model</th>
+                        <th>Type</th>
+                        <th>Rental/Day</th>
+                        <th>Car Price</th>
+                        <th>Date</th>
+                        <th>Pass.</th>
+                        <th>Speed</th>
+                        <th>Options</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="car : ${cars}">
+                        <td>
+                            <strong th:text="${car.brand}"></strong>
+                            <span th:text="${car.model}"></span>
+                        </td>
+                        <td th:text="${car.type}"></td>
+                        <td
+                            th:text="${car.rentalPricePerDay != null ? #numbers.formatCurrency(car.rentalPricePerDay) : 'N/A'}">
+                        </td>
+                        <td th:text="${car.carPrice != null ? #numbers.formatCurrency(car.carPrice) : 'N/A'}"></td>
+                        <td th:text="${car.purchaseDate}"></td>
+                        <td th:text="${car.maxPassengers}"></td>
+                        <td th:text="${car.maxSpeed + ' km/h'}"></td>
+                        <td>
+                            <span th:if="${car.airConditioner}" title="AC">❄️</span>
+                            <span th:if="${car.automaticTransmission}" title="Auto">⚙️</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/delete/' + ${car.id}}" class="btn btn-danger"
+                                style="padding: 5px 10px; font-size: 0.8rem;"
+                                onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

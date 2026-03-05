@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <div style="text-align: center; padding: 40px 0;">
+            <h1>Welcome to CarApp</h1>
+            <p style="color: #7f8c8d; font-size: 1.2rem;">Select an action to get started</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+            <a th:href="@{/cars}" style="text-decoration: none; color: inherit;">
+                <div class="card" style="text-align: center; transition: 0.3s; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-5px)'"
+                    onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🚗</div>
+                    <h2>Show All Cars</h2>
+                    <p style="color: #7f8c8d;">View and manage your fleet of vehicles.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/create}" style="text-decoration: none; color: inherit;">
+                <div class="card" style="text-align: center; transition: 0.3s; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-5px)'"
+                    onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">➕</div>
+                    <h2>Create New Car</h2>
+                    <p style="color: #7f8c8d;">Add a new vehicle to the registry.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

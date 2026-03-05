@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <div class="card">
+            <h2>Create New Car</h2>
+            <form th:action="@{/save}" th:object="${car}" method="post">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <input type="text" th:field="*{brand}" placeholder="e.g. Toyota">
+                        <span th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}" style="color:red"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Model</label>
+                        <input type="text" th:field="*{model}" placeholder="e.g. Corolla">
+                        <span th:if="${#fields.hasErrors('model')}" th:errors="*{model}" style="color:red"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select th:field="*{type}">
+                            <option th:each="t : ${carTypes}" th:value="${t}" th:text="${t}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Purchase Date</label>
+                        <input type="date" th:field="*{purchaseDate}">
+                        <span th:if="${#fields.hasErrors('purchaseDate')}" th:errors="*{purchaseDate}"
+                            style="color:red"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Rental Price Per Day ($)</label>
+                        <input type="number" step="0.01" th:field="*{rentalPricePerDay}">
+                        <span th:if="${#fields.hasErrors('rentalPricePerDay')}" th:errors="*{rentalPricePerDay}"
+                            style="color:red"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Car Price ($)</label>
+                        <input type="number" step="0.01" th:field="*{carPrice}">
+                        <span th:if="${#fields.hasErrors('carPrice')}" th:errors="*{carPrice}" style="color:red"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Passengers</label>
+                        <input type="number" th:field="*{maxPassengers}">
+                        <span th:if="${#fields.hasErrors('maxPassengers')}" th:errors="*{maxPassengers}"
+                            style="color:red"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Speed (km/h)</label>
+                        <input type="number" th:field="*{maxSpeed}">
+                        <span th:if="${#fields.hasErrors('maxSpeed')}" th:errors="*{maxSpeed}" style="color:red"></span>
+                    </div>
+                </div>
+
+                <div class="form-group checkbox-group" style="margin-top: 20px;">
+                    <div class="checkbox-item">
+                        <input type="checkbox" th:field="*{airConditioner}" id="ac">
+                        <label for="ac">Air Conditioner</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" th:field="*{automaticTransmission}" id="auto">
+                        <label for="auto">Automatic Transmission</label>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary">Save Car</button>
+                    <a th:href="@{/cars}" class="btn"
+                        style="background:#95a5a6; color:white; margin-left:10px;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
