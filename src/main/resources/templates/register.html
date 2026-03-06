@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Login - CarApp</title>
+    <title>Register - CarApp</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -21,7 +21,7 @@
             min-height: 100vh;
         }
 
-        .login-container {
+        .register-container {
             background: white;
             padding: 40px;
             border-radius: 8px;
@@ -30,18 +30,18 @@
             max-width: 400px;
         }
 
-        .login-header {
+        .register-header {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .login-header h1 {
+        .register-header h1 {
             color: var(--primary);
             margin: 0 0 8px 0;
             font-size: 1.8rem;
         }
 
-        .login-header p {
+        .register-header p {
             color: #7f8c8d;
             margin: 0;
         }
@@ -72,10 +72,10 @@
             border-color: var(--accent);
         }
 
-        .btn-login {
+        .btn-register {
             width: 100%;
             padding: 12px;
-            background: var(--accent);
+            background: #27ae60;
             color: white;
             border: none;
             border-radius: 5px;
@@ -84,51 +84,47 @@
             transition: background 0.3s;
         }
 
-        .btn-login:hover {
-            background: #2980b9;
+        .btn-register:hover {
+            background: #219a52;
         }
 
-        .alert {
+        .alert-error {
             padding: 10px 15px;
             border-radius: 4px;
             margin-bottom: 20px;
             text-align: center;
-        }
-
-        .alert-error {
             background: #fdecea;
             color: var(--danger);
             border: 1px solid #f5c6cb;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+        }
+
+        .login-link a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="login-header">
+    <div class="register-container">
+        <div class="register-header">
             <h1>CarApp</h1>
-            <p>Sign in to access administration</p>
+            <p>Create a new account</p>
         </div>
 
-        <div th:if="${param.error}" class="alert alert-error">
-            Invalid username or password.
-        </div>
+        <div th:if="${error}" class="alert-error" th:text="${error}"></div>
 
-        <div th:if="${param.logout}" class="alert alert-success">
-            You have been logged out.
-        </div>
-
-        <div th:if="${param.registered}" class="alert alert-success">
-            Account created successfully. You can now sign in.
-        </div>
-
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/register}" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" autofocus required>
@@ -137,11 +133,11 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn-login">Sign In</button>
+            <button type="submit" class="btn-register">Create Account</button>
         </form>
 
-        <div style="text-align: center; margin-top: 20px; color: #7f8c8d;">
-            Don't have an account? <a th:href="@{/register}" style="color: #3498db; text-decoration: none;">Create one</a>
+        <div class="login-link">
+            Already have an account? <a th:href="@{/login}">Sign in</a>
         </div>
     </div>
 </body>

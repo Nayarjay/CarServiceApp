@@ -1,13 +1,14 @@
 package org.example.config;
 
+import org.example.repository.AppUserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -17,6 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/register").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -32,13 +34,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        var user = User.builder()
-            .username("quentin")
-            .password(encoder.encode("quentin"))
-            .roles("ADMIN")
-            .build();
-        return new InMemoryUserDetailsManager(user);
+    public UserDetailsService userDetailsService(AppUserRepository userRepository) {
+        return username -> {
+            var appUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            return User.builder()
+                .username(appUser.getUsername())
+                .password(appUser.getPassword())
+                .roles("USER")
+                .build();
+        };
     }
 
     @Bean
