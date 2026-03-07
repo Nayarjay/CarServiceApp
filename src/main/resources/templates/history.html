@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<body>
+    <div th:fragment="content">
+        <div class="card">
+            <h2 style="margin-top: 0;">Operations History</h2>
+
+            <div th:if="${#lists.isEmpty(operations)}" style="padding: 40px; text-align: center; color: #7f8c8d;">
+                <h3>No Operations Yet</h3>
+                <p>Go to <a th:href="@{/rent}">Rent / Buy</a> to trigger your first operation.</p>
+            </div>
+
+            <table th:if="${not #lists.isEmpty(operations)}">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Vehicle</th>
+                        <th>Operation</th>
+                        <th>Status</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="op : ${operations}">
+                        <td th:text="${#temporals.format(op.createdAt, 'dd/MM HH:mm:ss')}" style="white-space: nowrap; color: #7f8c8d; font-size: 0.85rem;"></td>
+                        <td th:text="${op.userId}"></td>
+                        <td>
+                            <strong th:text="${op.vehicle.brand}"></strong>
+                            <span th:text="${op.vehicle.model}"></span>
+                        </td>
+                        <td>
+                            <span th:if="${op.operationType.name() == 'RENT'}" style="padding: 3px 10px; background: #eaf2f8; color: #2980b9; border-radius: 12px; font-size: 0.8rem;">RENT</span>
+                            <span th:if="${op.operationType.name() == 'BUY'}" style="padding: 3px 10px; background: #fef9f0; color: #e67e22; border-radius: 12px; font-size: 0.8rem;">BUY</span>
+                        </td>
+                        <td>
+                            <span th:if="${op.approved}" style="padding: 3px 10px; background: #d4edda; color: #155724; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">APPROVED</span>
+                            <span th:unless="${op.approved}" style="padding: 3px 10px; background: #fdecea; color: #c0392b; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">REJECTED</span>
+                        </td>
+                        <td style="font-size: 0.85rem; color: #555;" th:text="${op.message}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
