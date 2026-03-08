@@ -146,6 +146,13 @@
             <a th:href="@{/}">Home</a>
             <a th:href="@{/cars}">Show All Car Items</a>
             <a th:href="@{/create}">Create New Car</a>
+            <a th:href="@{/rent}" style="border-top: 1px solid #34495e; margin-top: 10px; padding-top: 15px;">Rent / Buy a Vehicle</a>
+            <a th:href="@{/history}">Operations History</a>
+        </div>
+        <div style="padding: 15px 25px; border-top: 1px solid #34495e;">
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:1rem; padding:0;">Logout</button>
+            </form>
         </div>
     </div>
 
