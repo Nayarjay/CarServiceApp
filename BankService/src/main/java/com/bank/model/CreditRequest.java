@@ -13,5 +13,17 @@ import lombok.NoArgsConstructor;
 public class CreditRequest {
     private String userId; // qui achète ?
     private double amount; // Combien ça coûte ?
-    private String operationType; // Achat ou Location ?
+    private String operationType; // Achatx²
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public double getAmount() {
+        return  amount;
+    }
 }
