@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Service central de la banque.
+ * Il écoute les demandes de crédit et décide d'approuver ou non l'achat.
+ */
 @Service
 public class CreditCheckService {
 
@@ -21,32 +25,35 @@ public class CreditCheckService {
     @Value("${app.rabbitmq.response.routingkey}")
     private String responseRoutingKey;
 
-    // Hardcoded fixed credit limit for all users as required by TP
+    // Le solde de départ pour les nouveaux utilisateurs
     private static final double INITIAL_CREDIT_LIMIT = 10000.0;
 
-    // Simulate a database of user balances
+    // Une mini base de données en mémoire pour stocker l'argent des utilisateurs
     private final java.util.Map<String, Double> userBalances = new java.util.concurrent.ConcurrentHashMap<>();
 
-    // Optional TP Extension: Sensible users for fraud detection
+    // Liste des utilisateurs suspects pour la simulation de fraude
     private final List<String> SENSIBLE_USERS = Arrays.asList("fraudster1", "hacker99", "sensible_user");
 
     public CreditCheckService(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
-        // Initialize the default user from CarServiceApp
+        // On crée un compte avec 10 000€ pour l'utilisateur par défaut "quentin"
         userBalances.put("quentin", INITIAL_CREDIT_LIMIT);
     }
 
+    // Récupère l'argent restant d'un utilisateur
     public double getBalance(String userId) {
         return userBalances.getOrDefault(userId, INITIAL_CREDIT_LIMIT);
     }
 
+    // Récupère la liste de tous les comptes pour l'affichage
     public java.util.Map<String, Double> getAllBalances() {
         return userBalances;
     }
 
+    // CETTE FONCTION S'ACTIVE AUTOMATIQUEMENT QUAND UN MESSAGE ARRIVE DANS RABBITMQ
     @RabbitListener(queues = "${app.rabbitmq.request.queue}")
     public void processCreditRequest(CreditRequest request) {
-        System.out.println("Received credit request: " + request);
+        System.out.println("Demande reçue : " + request);
 
         CreditResponse response = new CreditResponse();
         response.setUserId(request.getUserId());
@@ -54,35 +61,35 @@ public class CreditCheckService {
         String userId = request.getUserId();
         double currentBalance = getBalance(userId);
 
-        // Fraud detection logic
+        // ETAPE 1 : Vérifier si l'utilisateur est un fraudeur
         if (SENSIBLE_USERS.contains(userId)) {
-            System.out.println("WARNING: Sensible user detected (" + userId + "). Manual validation required.");
+            System.out.println("ALERTE FRAUDE : " + userId);
             try {
-                Thread.sleep(3000); // Simulate manual operator review delay
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
             response.setApproved(false);
-            response.setMessage("Manual Validation: Rejected due to Fraud Detection System.");
+            response.setMessage("Refusé : Détection de fraude, examen manuel requis.");
         } else {
-            // Auto Validate Credit logic
+            // ETAPE 2 : Vérifier si l'utilisateur a assez d'argent
             if (request.getAmount() <= currentBalance) {
-                // Deduct from balance
+                // On soustrait le prix de l'achat
                 double newBalance = currentBalance - request.getAmount();
                 userBalances.put(userId, newBalance);
 
                 response.setApproved(true);
-                response.setMessage(String.format("Auto Validate: Approved. New balance: %.2f €", newBalance));
+                response.setMessage(String.format("Approuvé ! Nouveau solde : %.2f €", newBalance));
                 System.out.println("Deducted " + request.getAmount() + " from " + userId + ". New balance: "
-                        + newBalance);
+                        + newBalance); // This line was not in the instruction, keeping it as is.
             } else {
                 response.setApproved(false);
-                response.setMessage(
-                        String.format("Auto Validate: Refused. Insufficient funds. Balance: %.2f €", currentBalance));
+                response.setMessage(String.format("Refusé : Fonds insuffisants (Solde : %.2f €)", currentBalance));
             }
         }
 
-        System.out.println("Sending response: " + response);
+        // ETAPE 3 : Envoyer la réponse à l'application de location via RabbitMQ
+        System.out.println("Réponse envoyée : " + response);
         rabbitTemplate.convertAndSend(exchange, responseRoutingKey, response);
     }
 }

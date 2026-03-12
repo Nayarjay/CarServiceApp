@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Modèle de données représentant une demande de crédit envoyée par la location.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreditRequest {
-    private String userId;
-    private double amount;
-    private String operationType;
+    private String userId; // qui achète ?
+    private double amount; // Combien ça coûte ?
+    private String operationType; // Achat ou Location ?
 }
